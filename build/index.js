@@ -220,16 +220,25 @@ class Cell{
 
 
 
+snake0 = new Snake(150,150,10,'up');
 
-function doIt(){
-    snake0 = new Snake(150,150,10,'up');
-}
-
-function doIt2(){
+function start(){
     snakeRunIntervalOBJ = setInterval("snake0.runSnake()",1000)
 }
-function doIt3(){
-    for (let i=0;i<snake0.snakeLength;i++){
-        $(`#cell-${i}`).text(`${i}`)
+
+function restart(){
+    console.log('restarted')
+    $('#game-board').css('background-color','rgb(231 229 228)')
+    clearInterval(snakeRunIntervalOBJ);
+    for(let i=0;i<snake0.snakeLength;i++){
+        $(`#cell-${i}`).remove()
+        delete snake0.cells[i];
     }
+    delete snake0;
+    var idsArray = $("[id]").map(function() {
+        return this.id;
+      }).get();
+    console.log(idsArray)
+    snake0 = new Snake(150,150,10,'up');
+    start()    
 }
