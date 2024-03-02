@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cell {
+    @apply absolute w-2.5 h-2.5  bg-blue-500 text-white left-40 top-40;
+ }

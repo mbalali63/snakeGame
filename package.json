@@ -1,0 +1,14 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "A snake is moving inside the game board. Every time the user pushes any of the arrow keys on the keyboard, its direction changes. The snake will grow a unit every n seconds. The game is over as soon as the snake collides with itself or walls.\r ## Implementation:",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tailwindcss -i ./src/input.css -o ./build/style.css --watch"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

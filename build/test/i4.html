@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Move Element</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <style>
+    #movingElement {
+      width: 50px;
+      height: 50px;
+      background-color: blue;
+      position: absolute;
+      left: 0;
+      top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="movingElement"></div>
+<button id="moveButton">Move Element</button>
+
+<script>
+  $(document).ready(function () {
+    // Initial position
+    let currentPosition = 0;
+
+    // Constant value to move by
+    const dx = 50;
+
+    // Function to move the element
+    function moveElement() {
+      currentPosition += dx;
+      $('#movingElement').animate({ left: currentPosition }, 'slow');
+    }
+
+    // Click event for the button
+    $('#moveButton').on('click', function () {
+      moveElement();
+    });
+  });
+</script>
+
+</body>
+</html>
