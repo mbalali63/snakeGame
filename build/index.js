@@ -65,9 +65,8 @@ class Snake{
         }   
     }
     runSnake(){
-        this.moveForward();
-        console.log('run again')
-        this.increaseLength(this.timeStep);
+        this.moveForward().then(this.increaseLength(this.timeStep));
+        this.checkCollision();
         this.timeStep += 1;        
     }
     addCell(){
@@ -75,40 +74,12 @@ class Snake{
         let yLastCell = this.cells[this.snakeLength-1].y0
         let direction0 = this.cells[this.snakeLength-1].direction0
         let currentCell = this.snakeLength-1;
-        this.cells.push(nextCell(xLastCell,yLastCell,direction0,currentCell));        
+        this.cells.push(nextCell(xLastCell,yLastCell,direction0,currentCell));
         this.snakeLength += 1        
     }
     moveForward(){
-        let i = 0;
-        let direction0 = this.cells[i].direction0
-        let dx;
-        let dy;
-        if (direction0 === 'up'){
-            dx = 0;
-            dy = -cellHSize;
-        }else if (direction0 === 'down'){
-            dx = 0;
-            dy = cellHSize;
-        }
-        else if (direction0 === 'left'){
-        dx = -cellWSize;
-        dy = 0;
-        }
-        else if (direction0 === 'right'){
-            dx = cellWSize;
-            dy = 0;
-        }
-        this.cells[i].x0 += dx
-        this.cells[i].y0 += dy;
-        $(`#cell-${i}`).animate({left: this.cells[i].x0},'fast')
-        $(`#cell-${i}`).animate({top: this.cells[i].y0},'fast')
-
-        for(let i=1;i<this.snakeLength-1;i++){
-            this.turnPoints.forEach(element => {
-                if (this.cells[i].x0 === element[0] && this.cells[i].y0 === element[1]){
-                    this.cells[i].direction0 = element[2];                    
-                }
-            });
+        return new Promise((resolve,reject) => {
+            let i = 0;
             let direction0 = this.cells[i].direction0
             let dx;
             let dy;
@@ -126,39 +97,69 @@ class Snake{
             else if (direction0 === 'right'){
                 dx = cellWSize;
                 dy = 0;
-            }            
+            }
             this.cells[i].x0 += dx
             this.cells[i].y0 += dy;
             $(`#cell-${i}`).animate({left: this.cells[i].x0},'fast')
             $(`#cell-${i}`).animate({top: this.cells[i].y0},'fast')
-        }
-        i = this.snakeLength - 1;
-        for (let j=0;j<this.turnPoints.length;j++){
-            if (this.cells[i].x0 === this.turnPoints[j][0] && this.cells[i].y0 === this.turnPoints[j][1]){
-                this.cells[i].direction0 = this.turnPoints[j][2];
-                this.turnPoints.splice(i,1);
+    
+            for(let i=1;i<this.snakeLength-1;i++){
+                this.turnPoints.forEach(element => {
+                    if (this.cells[i].x0 === element[0] && this.cells[i].y0 === element[1]){
+                        this.cells[i].direction0 = element[2];                    
+                    }
+                });
+                let direction0 = this.cells[i].direction0
+                let dx;
+                let dy;
+                if (direction0 === 'up'){
+                    dx = 0;
+                    dy = -cellHSize;
+                }else if (direction0 === 'down'){
+                    dx = 0;
+                    dy = cellHSize;
+                }
+                else if (direction0 === 'left'){
+                dx = -cellWSize;
+                dy = 0;
+                }
+                else if (direction0 === 'right'){
+                    dx = cellWSize;
+                    dy = 0;
+                }            
+                this.cells[i].x0 += dx
+                this.cells[i].y0 += dy;
+                $(`#cell-${i}`).animate({left: this.cells[i].x0},'fast')
+                $(`#cell-${i}`).animate({top: this.cells[i].y0},'fast')
             }
-        }
-        direction0 = this.cells[i].direction0;
-        if (direction0 === 'up'){
-            dx = 0;
-            dy = -cellHSize;
-        }else if (direction0 === 'down'){
-            dx = 0;
-            dy = cellHSize;
-        }
-        else if (direction0 === 'left'){
-        dx = -cellWSize;
-        dy = 0;
-        }
-        else if (direction0 === 'right'){
-            dx = cellWSize;
+            i = this.snakeLength - 1;
+            for (let j=0;j<this.turnPoints.length;j++){
+                if (this.cells[i].x0 === this.turnPoints[j][0] && this.cells[i].y0 === this.turnPoints[j][1]){
+                    this.cells[i].direction0 = this.turnPoints[j][2];
+                    this.turnPoints.splice(i,1);
+                }
+            }
+            direction0 = this.cells[i].direction0;
+            if (direction0 === 'up'){
+                dx = 0;
+                dy = -cellHSize;
+            }else if (direction0 === 'down'){
+                dx = 0;
+                dy = cellHSize;
+            }
+            else if (direction0 === 'left'){
+            dx = -cellWSize;
             dy = 0;
-        }        
-        this.cells[i].x0 += dx
-        this.cells[i].y0 += dy;
-        $(`#cell-${i}`).animate({left: this.cells[i].x0},'fast')
-        $(`#cell-${i}`).animate({top: this.cells[i].y0},'fast')
+            }
+            else if (direction0 === 'right'){
+                dx = cellWSize;
+                dy = 0;
+            }        
+            this.cells[i].x0 += dx
+            this.cells[i].y0 += dy;
+            $(`#cell-${i}`).animate({left: this.cells[i].x0},'fast')
+            $(`#cell-${i}`).animate({top: this.cells[i].y0},'fast')
+        })
     }
 
     changeDirection(newDirection){
@@ -186,6 +187,24 @@ class Snake{
             this.addCell()
         }
     }
+
+    checkCollision(){
+        if ((this.cells[0].x0 === 0 || this.cells[0].x0 >= 384 - cellWSize) || (this.cells[0].y0 === 0 || this.cells[0].y0 === 384 - cellHSize)) {
+            this.collide();
+        }else
+        {
+            for (let i=1;i<this.snakeLength;i++){
+                if (this.cells[i].x0 === this.cells[0].x0 && this.cells[i].y0 === this.cells[0].y0){
+                    this.collide()
+                }        
+            }
+        }    
+    }
+    collide(){
+        clearInterval(snakeRunIntervalOBJ);
+        $('#game-board').css('background-color','#f27777');
+        alert('You lose the game.')
+    }
 }
 class Cell{
     constructor(x0,y0,direction0,currentCell){
@@ -207,5 +226,10 @@ function doIt(){
 }
 
 function doIt2(){
-    setInterval("snake0.runSnake()",1000)
+    snakeRunIntervalOBJ = setInterval("snake0.runSnake()",1000)
+}
+function doIt3(){
+    for (let i=0;i<snake0.snakeLength;i++){
+        $(`#cell-${i}`).text(`${i}`)
+    }
 }
